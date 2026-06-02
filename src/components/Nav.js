@@ -45,16 +45,23 @@ export default function Nav() {
     return pathname === href;
   };
 
+  const handleLogoClick = (e) => {
+    if (isHome) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
     <nav 
       id="nav" 
-      className={`nav-visible ${scrolled ? 'scrolled' : ''}`} 
+      className={`nav-visible ${isHome ? 'home-nav' : 'sub-nav'} ${scrolled ? 'scrolled' : ''}`} 
       aria-label="Main navigation"
       style={!isHome ? { opacity: 1, pointerEvents: 'all' } : {}}
     >
       {isHome ? (
         <>
-          <Link href="/" className="n-logo" id="nav-logo">
+          <Link href="/" className="n-logo" id="nav-logo" onClick={handleLogoClick}>
             <span className="c-b">J</span>
             <span className="c-g">U</span>
             <span className="c-r">S</span>T
@@ -81,11 +88,6 @@ export default function Nav() {
             <li>
               <Link href="/#contact" id="nav-contact" className={`rgb-hover ${isLinkActive('/#contact') ? 'active' : ''}`}>
                 Contact
-              </Link>
-            </li>
-            <li>
-              <Link href="/stills" id="nav-stills" className={`rgb-hover ${pathname === '/stills' ? 'active' : ''}`}>
-                Stills
               </Link>
             </li>
           </ul>

@@ -56,6 +56,7 @@ export default function Home() {
         opacity: 0,
         filter: 'blur(30px)',
         letterSpacing: '0.45em',
+        textIndent: '0.45em',
         scale: 0.94,
         duration: 1.2,
         ease: 'power3.inOut'
@@ -65,6 +66,7 @@ export default function Home() {
         opacity: 0,
         filter: 'blur(30px)',
         letterSpacing: '0.45em',
+        textIndent: '0.45em',
         scale: 0.94,
         duration: 1.2,
         ease: 'power3.inOut'
@@ -90,14 +92,14 @@ export default function Home() {
 
     // 1. JUST blurs and fades in with expanding letter-spacing
     tl.fromTo(justLine,
-      { opacity: 0, filter: 'blur(20px)', letterSpacing: '0.12em', scale: 1.08 },
-      { opacity: 1, filter: 'blur(0px)', letterSpacing: '0.26em', scale: 1.0, duration: 2.0, ease: 'power3.out' }
+      { opacity: 0, filter: 'blur(20px)', letterSpacing: '0.12em', textIndent: '0.12em', scale: 1.08 },
+      { opacity: 1, filter: 'blur(0px)', letterSpacing: '0.26em', textIndent: '0.26em', scale: 1.0, duration: 2.0, ease: 'power3.out' }
     );
 
     // 2. RGB blurs and fades in with expanding letter-spacing (overlaps beautifully)
     tl.fromTo(rgbLine,
-      { opacity: 0, filter: 'blur(20px)', letterSpacing: '0.12em', scale: 1.08 },
-      { opacity: 1, filter: 'blur(0px)', letterSpacing: '0.26em', scale: 1.0, duration: 2.0, ease: 'power3.out' },
+      { opacity: 0, filter: 'blur(20px)', letterSpacing: '0.12em', textIndent: '0.12em', scale: 1.08 },
+      { opacity: 1, filter: 'blur(0px)', letterSpacing: '0.26em', textIndent: '0.26em', scale: 1.0, duration: 2.0, ease: 'power3.out' },
       '-=1.5'
     );
 
@@ -112,8 +114,8 @@ export default function Home() {
       if (tl.isActive()) {
         tl.kill();
       }
-      gsap.set(justLine, { opacity: 1, filter: 'blur(0px)', letterSpacing: '0.26em', scale: 1.0 });
-      gsap.set(rgbLine, { opacity: 1, filter: 'blur(0px)', letterSpacing: '0.26em', scale: 1.0 });
+      gsap.set(justLine, { opacity: 1, filter: 'blur(0px)', letterSpacing: '0.26em', textIndent: '0.26em', scale: 1.0 });
+      gsap.set(rgbLine, { opacity: 1, filter: 'blur(0px)', letterSpacing: '0.26em', textIndent: '0.26em', scale: 1.0 });
       doBurst();
     };
 
@@ -388,17 +390,43 @@ export default function Home() {
     return () => ctx.revert();
   }, [introActive]);
 
-  // Form Submission Handler
-  const handleContactSubmit = (e) => {
+  // Form Submission Handler (uses Web3Forms for secure, direct-to-inbox emails)
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
     setContactStatus('SENDING');
-    setTimeout(() => {
-      setContactStatus('SENT');
-      e.target.reset();
+
+    const formData = new FormData(e.target);
+    // Replace with your Web3Forms Access Key from web3forms.com
+    formData.append("access_key", "YOUR_ACCESS_KEY_HERE");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setContactStatus('SENT');
+        e.target.reset();
+        setTimeout(() => {
+          setContactStatus('IDLE');
+        }, 4000);
+      } else {
+        console.error("Form submission failed:", data);
+        setContactStatus('ERROR');
+        setTimeout(() => {
+          setContactStatus('IDLE');
+        }, 4000);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setContactStatus('ERROR');
       setTimeout(() => {
         setContactStatus('IDLE');
-      }, 3000);
-    }, 1500);
+      }, 4000);
+    }
   };
 
   return (
@@ -411,20 +439,22 @@ export default function Home() {
           {/* Fullscreen Video Background */}
           <div className="intro-canvas-container" style={{ overflow: 'hidden' }}>
             <video
-              src="/Intro.mp4"
               autoPlay
               muted
               playsInline
               loop
               style={{
-                width: '120%',
-                height: '120%',
+                width: '100%',
+                height: '100%',
                 objectFit: 'cover',
                 position: 'absolute',
-                left: '-10%',
-                top: '-10%'
+                left: '0',
+                top: '0'
               }}
-            />
+            >
+              <source src="/Intro.mp4" type="video/mp4" />
+              <source src="/Intro.mov" type="video/quicktime" />
+            </video>
           </div>
 
           {/* Fullscreen Overlay Content */}
@@ -775,17 +805,17 @@ export default function Home() {
                 <p className="contact-form-sub">Feel free to contact us any time. We will get back to you as soon as we can!</p>
                 <form className="contact-form" onSubmit={handleContactSubmit}>
                   <div className="form-group">
-                    <input type="text" id="form-name" required placeholder=" " />
+                    <input type="text" id="form-name" name="name" required placeholder=" " />
                     <label htmlFor="form-name">Name</label>
                     <span className="form-line"></span>
                   </div>
                   <div className="form-group">
-                    <input type="email" id="form-email" required placeholder=" " />
+                    <input type="email" id="form-email" name="email" required placeholder=" " />
                     <label htmlFor="form-email">Email</label>
                     <span className="form-line"></span>
                   </div>
                   <div className="form-group">
-                    <textarea id="form-message" required placeholder=" "></textarea>
+                    <textarea id="form-message" name="message" required placeholder=" "></textarea>
                     <label htmlFor="form-message">Message</label>
                     <span className="form-line"></span>
                   </div>
@@ -794,6 +824,7 @@ export default function Home() {
                       {contactStatus === 'IDLE' && 'SEND'}
                       {contactStatus === 'SENDING' && 'SENDING...'}
                       {contactStatus === 'SENT' && 'SENT! THANK YOU.'}
+                      {contactStatus === 'ERROR' && 'ERROR! TRY AGAIN.'}
                     </span>
                   </button>
                 </form>
@@ -811,6 +842,12 @@ export default function Home() {
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                       </div>
                       <a href="mailto:aadeshsalunke9@gmail.com" className="info-text">aadeshsalunke9@gmail.com</a>
+                    </div>
+                    <div className="info-item">
+                      <div className="info-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                      </div>
+                      <a href="tel:+918550995595" className="info-text">+91 8550995595</a>
                     </div>
                     <div className="info-item">
                       <div className="info-icon">
@@ -835,7 +872,7 @@ export default function Home() {
                     <a href="https://www.linkedin.com/in/aadesh-salunke/" target="_blank" rel="noopener" aria-label="LinkedIn">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
                     </a>
-                    <a href="https://www.instagram.com/aadesh.salunke/" target="_blank" rel="noopener" aria-label="Instagram">
+                    <a href="https://www.instagram.com/aadessh.____?igsh=cDh4anQ1bWk1NWky&utm_source=qr" target="_blank" rel="noopener" aria-label="Instagram">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                     </a>
                   </div>
