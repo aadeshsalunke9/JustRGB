@@ -409,7 +409,7 @@ export default function Home() {
           <div className="intro-bg-glow" aria-hidden="true"></div>
           
           {/* Fullscreen Video Background */}
-          <div className="intro-canvas-container">
+          <div className="intro-canvas-container" style={{ overflow: 'hidden' }}>
             <video
               src="/Intro.mp4"
               autoPlay
@@ -417,12 +417,12 @@ export default function Home() {
               playsInline
               loop
               style={{
-                width: '108%',
-                height: '108%',
+                width: '120%',
+                height: '120%',
                 objectFit: 'cover',
                 position: 'absolute',
-                left: 0,
-                top: 0
+                left: '-10%',
+                top: '-10%'
               }}
             />
           </div>
