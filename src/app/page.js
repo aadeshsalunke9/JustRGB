@@ -7,7 +7,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import Accordion from '@/components/Accordion';
 import StillsSlideshow from '@/components/StillsSlideshow';
-import LogoAnimation from '@/components/LogoAnimation';
 import './globals.css';
 
 export default function Home() {
@@ -17,7 +16,6 @@ export default function Home() {
   
   const landingRef = useRef(null);
   const introTimeline = useRef(null);
-  const triggerBurst = useRef(null);
 
   // Initialize intro and scroll animations
   useEffect(() => {
@@ -72,10 +70,7 @@ export default function Home() {
         ease: 'power3.inOut'
       });
 
-      // Trigger WebGL particles burst
-      if (triggerBurst.current) {
-        triggerBurst.current();
-      }
+
 
       // fade whole overlay
       gsap.to(overlay, {
@@ -413,11 +408,19 @@ export default function Home() {
         <div id="intro-overlay">
           <div className="intro-bg-glow" aria-hidden="true"></div>
           
-          {/* 3D Logo Workspace (WebGL Canvas) */}
+          {/* Fullscreen Video Background */}
           <div className="intro-canvas-container">
-            <LogoAnimation 
-              onAnimComplete={() => {}}
-              triggerBurstRef={triggerBurst}
+            <video
+              src="/Intro.mp4"
+              autoPlay
+              muted
+              playsInline
+              loop
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }}
             />
           </div>
 
