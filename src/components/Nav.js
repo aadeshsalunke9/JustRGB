@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === '/';
 
@@ -38,6 +39,20 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isHome]);
 
+  // Close menu on route change or scroll
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
   const isLinkActive = (href) => {
     if (href.startsWith('/#')) {
       return activeSection === href.split('#')[1];
@@ -49,13 +64,18 @@ export default function Nav() {
     if (isHome) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      setMenuOpen(false);
     }
+  };
+
+  const handleNavLinkClick = () => {
+    setMenuOpen(false);
   };
 
   return (
     <nav 
       id="nav" 
-      className={`nav-visible ${isHome ? 'home-nav' : 'sub-nav'} ${scrolled ? 'scrolled' : ''}`} 
+      className={`nav-visible ${isHome ? 'home-nav' : 'sub-nav'} ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'menu-open' : ''}`} 
       aria-label="Main navigation"
       style={!isHome ? { opacity: 1, pointerEvents: 'all' } : {}}
     >
@@ -69,28 +89,73 @@ export default function Nav() {
             <span className="c-g">G</span>
             <span className="c-r">B</span>
           </Link>
+
+          {/* Desktop links */}
           <ul className="n-links" role="list">
             <li>
-              <Link href="/#bio" id="nav-bio" className={`rgb-hover ${isLinkActive('/#bio') ? 'active' : ''}`}>
+              <Link href="/#bio" id="nav-bio" className={`rgb-hover ${isLinkActive('/#bio') ? 'active' : ''}`} onClick={handleNavLinkClick}>
                 About
               </Link>
             </li>
             <li>
-              <Link href="/#work" id="nav-work" className={`rgb-hover ${isLinkActive('/#work') ? 'active' : ''}`}>
+              <Link href="/#work" id="nav-work" className={`rgb-hover ${isLinkActive('/#work') ? 'active' : ''}`} onClick={handleNavLinkClick}>
                 Work
               </Link>
             </li>
             <li>
-              <Link href="/#process" id="nav-process" className={`rgb-hover ${isLinkActive('/#process') ? 'active' : ''}`}>
+              <Link href="/#process" id="nav-process" className={`rgb-hover ${isLinkActive('/#process') ? 'active' : ''}`} onClick={handleNavLinkClick}>
                 Process
               </Link>
             </li>
             <li>
-              <Link href="/#contact" id="nav-contact" className={`rgb-hover ${isLinkActive('/#contact') ? 'active' : ''}`}>
+              <Link href="/#contact" id="nav-contact" className={`rgb-hover ${isLinkActive('/#contact') ? 'active' : ''}`} onClick={handleNavLinkClick}>
                 Contact
               </Link>
             </li>
           </ul>
+
+          {/* Hamburger button — mobile only */}
+          <button
+            className="nav-hamburger"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
+            <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
+            <span className={`ham-line ${menuOpen ? 'open' : ''}`} />
+          </button>
+
+          {/* Mobile drawer */}
+          <div className={`mobile-drawer ${menuOpen ? 'drawer-open' : ''}`} aria-hidden={!menuOpen}>
+            <ul className="mobile-nav-links" role="list">
+              <li>
+                <Link href="/#bio" onClick={handleNavLinkClick} className={isLinkActive('/#bio') ? 'active' : ''}>
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/#work" onClick={handleNavLinkClick} className={isLinkActive('/#work') ? 'active' : ''}>
+                  Work
+                </Link>
+              </li>
+              <li>
+                <Link href="/#process" onClick={handleNavLinkClick} className={isLinkActive('/#process') ? 'active' : ''}>
+                  Process
+                </Link>
+              </li>
+              <li>
+                <Link href="/#contact" onClick={handleNavLinkClick} className={isLinkActive('/#contact') ? 'active' : ''}>
+                  Contact
+                </Link>
+              </li>
+            </ul>
+            <div className="mobile-drawer-footer">
+              <span className="c-r">R</span>
+              <span className="c-g">G</span>
+              <span className="c-b">B</span>
+            </div>
+          </div>
         </>
       ) : (
         <>
