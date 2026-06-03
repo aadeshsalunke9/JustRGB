@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  distDir: 'dist',
+  // Standard Next.js config — Vercel handles routing natively
 };
 
 export default nextConfig;
