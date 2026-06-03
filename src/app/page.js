@@ -452,8 +452,8 @@ export default function Home() {
                 top: '0'
               }}
             >
+              <source src="/Intro_web.mp4" type="video/mp4" />
               <source src="/Intro.mp4" type="video/mp4" />
-              <source src="/Intro.mov" type="video/quicktime" />
             </video>
           </div>
 
