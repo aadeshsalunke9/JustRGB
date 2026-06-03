@@ -85,6 +85,7 @@ export default function Nav() {
       aria-hidden={!menuOpen}
       aria-modal={menuOpen}
       role="dialog"
+      onClick={() => setMenuOpen(false)}
     >
       <ul className="mobile-nav-links" role="list">
         <li>
