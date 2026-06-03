@@ -1,5 +1,6 @@
 import { Bebas_Neue, Cormorant_Garamond, DM_Mono } from "next/font/google";
 import "./globals.css";
+import "./mobile.css";
 import RgbStrip from "@/components/RgbStrip";
 import Nav from "@/components/Nav";
 import Cursor from "@/components/Cursor";

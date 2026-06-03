@@ -150,11 +150,6 @@ export default function Nav() {
                 </Link>
               </li>
             </ul>
-            <div className="mobile-drawer-footer">
-              <span className="c-r">R</span>
-              <span className="c-g">G</span>
-              <span className="c-b">B</span>
-            </div>
           </div>
         </>
       ) : (
