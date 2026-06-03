@@ -390,38 +390,43 @@ export default function Home() {
     return () => ctx.revert();
   }, [introActive]);
 
-  // Form Submission Handler (uses Web3Forms for secure, direct-to-inbox emails)
+  // Form Submission Handler (uses Resend for secure, direct-to-inbox emails)
   const handleContactSubmit = async (e) => {
     e.preventDefault();
     setContactStatus('SENDING');
 
     const formData = new FormData(e.target);
-    // Replace with your Web3Forms Access Key from web3forms.com
-    formData.append("access_key", "YOUR_ACCESS_KEY_HERE");
+    const payload = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      subject: formData.get('subject') || '',
+      message: formData.get('message'),
+    };
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
 
-      if (data.success) {
+      if (response.ok && data.success) {
         setContactStatus('SENT');
         e.target.reset();
         setTimeout(() => {
           setContactStatus('IDLE');
         }, 4000);
       } else {
-        console.error("Form submission failed:", data);
+        console.error('Form submission failed:', data);
         setContactStatus('ERROR');
         setTimeout(() => {
           setContactStatus('IDLE');
         }, 4000);
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error('Error submitting form:', error);
       setContactStatus('ERROR');
       setTimeout(() => {
         setContactStatus('IDLE');
