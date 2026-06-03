@@ -13,9 +13,22 @@ export default function Home() {
   const [introActive, setIntroActive] = useState(true);
   const [weddingModalOpen, setWeddingModalOpen] = useState(false);
   const [contactStatus, setContactStatus] = useState('IDLE'); // 'IDLE', 'SENDING', 'SENT'
+  const [collagePhotos, setCollagePhotos] = useState([]);
   
   const landingRef = useRef(null);
   const introTimeline = useRef(null);
+
+  // Load collage photos list dynamically
+  useEffect(() => {
+    fetch('/collage_photos.json')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.length) {
+          setCollagePhotos(data);
+        }
+      })
+      .catch((err) => console.error('Failed to load collage photos list', err));
+  }, []);
 
   // Initialize intro and scroll animations
   useEffect(() => {
@@ -521,8 +534,8 @@ export default function Home() {
               <div className="bio-slide bio-slide--quote">
                 <div className="slide-collage-bg">
                   <div className="collage-bg-grid">
-                    {Array.from({ length: 12 }).map((_, i) => (
-                      <img key={i} src={`/images/collage/photo_${String(i + 1).padStart(3, '0')}.jpg`} alt="" />
+                    {collagePhotos.slice(0, 12).map((photoName, i) => (
+                      <img key={i} src={`/images/collage/${photoName}`} alt="" />
                     ))}
                   </div>
                   <div className="collage-bg-overlay"></div>
@@ -542,8 +555,8 @@ export default function Home() {
               <div className="bio-slide bio-slide--stats">
                 <div className="slide-collage-bg">
                   <div className="collage-bg-grid">
-                    {Array.from({ length: 12 }).map((_, i) => (
-                      <img key={i} src={`/images/collage/photo_${String(i + 13).padStart(3, '0')}.jpg`} alt="" />
+                    {collagePhotos.slice(12, 24).map((photoName, i) => (
+                      <img key={i} src={`/images/collage/${photoName}`} alt="" />
                     ))}
                   </div>
                   <div className="collage-bg-overlay"></div>
@@ -576,8 +589,8 @@ export default function Home() {
               <div className="bio-slide bio-slide--about">
                 <div className="slide-collage-bg">
                   <div className="collage-bg-grid">
-                    {Array.from({ length: 12 }).map((_, i) => (
-                      <img key={i} src={`/images/collage/photo_${String(i + 25).padStart(3, '0')}.jpg`} alt="" />
+                    {collagePhotos.slice(24, 36).map((photoName, i) => (
+                      <img key={i} src={`/images/collage/${photoName}`} alt="" />
                     ))}
                   </div>
                   <div className="collage-bg-overlay"></div>
