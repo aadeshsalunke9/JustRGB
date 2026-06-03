@@ -361,7 +361,7 @@ export default function StillsPage() {
           </button>
           <div className="image-lightbox-content">
             <img 
-              src={`/images/collage/photo_${String(lightboxIndex + 1).padStart(3, '0')}.jpg`} 
+              src={`/images/collage/${photos[lightboxIndex]}`} 
               alt="Lightbox Preview" 
             />
             <span className="image-lightbox-caption">
