@@ -596,7 +596,7 @@ body:has(.rgb-hover:hover) #cursor-ring { width: 58px; height: 58px; }
   font-family: var(--fh);
   font-weight: 800;
   /* clamp ensures full name fits at every viewport width */
-  font-size: clamp(3rem, 8.5vw, 8.5rem);
+  font-size: clamp(2.5rem, 6.5vw, 6.5rem);
   color: #ffffff;
   --text-color: #ffffff;
   text-transform: uppercase;

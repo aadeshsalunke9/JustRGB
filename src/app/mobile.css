@@ -143,7 +143,7 @@
     align-items: flex-end;
   }
   .hero-name {
-    font-size: clamp(2.4rem, 10vw, 4rem);
+    font-size: clamp(2rem, 8vw, 3.2rem);
     margin-bottom: 24px;
   }
   .hero-meta { flex-wrap: wrap; gap: 10px; }
@@ -250,7 +250,7 @@
 /* ── EXTRA SMALL ≤ 480px ──────────────────────────────────────── */
 @media (max-width: 480px) {
   :root { --gutter: 20px; }
-  .hero-name { font-size: clamp(2rem, 12vw, 3rem); }
+  .hero-name { font-size: clamp(1.8rem, 10vw, 2.5rem); }
   .intro-line { font-size: clamp(3rem, 16vw, 6rem); }
   .vertical-reels-grid-2,
   .vertical-reels-grid-3 { max-width: 100%; }
