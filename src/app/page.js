@@ -7,28 +7,17 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import Accordion from '@/components/Accordion';
 import StillsSlideshow from '@/components/StillsSlideshow';
+import collagePhotosData from '../../public/collage_photos.json';
 import './globals.css';
 
 export default function Home() {
   const [introActive, setIntroActive] = useState(true);
   const [weddingModalOpen, setWeddingModalOpen] = useState(false);
   const [contactStatus, setContactStatus] = useState('IDLE'); // 'IDLE', 'SENDING', 'SENT'
-  const [collagePhotos, setCollagePhotos] = useState([]);
+  const [collagePhotos, setCollagePhotos] = useState(collagePhotosData);
   
   const landingRef = useRef(null);
   const introTimeline = useRef(null);
-
-  // Load collage photos list dynamically
-  useEffect(() => {
-    fetch('/collage_photos.json')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.length) {
-          setCollagePhotos(data);
-        }
-      })
-      .catch((err) => console.error('Failed to load collage photos list', err));
-  }, []);
 
   // Initialize intro and scroll animations
   useEffect(() => {

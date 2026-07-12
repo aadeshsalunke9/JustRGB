@@ -1,13 +1,16 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import stillsPhotos from '../../../public/stills_photos.json';
 import './stills.css';
 
 export default function StillsPage() {
   const [view, setView] = useState('3d'); // '3d' or 'grid'
-  const [photos, setPhotos] = useState([]);
+  const [photos, setPhotos] = useState(stillsPhotos);
   const [lightboxIndex, setLightboxIndex] = useState(null);
   
+  const containerRef = useRef(null);
   const carouselRef = useRef(null);
   const stateRef = useRef({
     theta: 0,
@@ -23,17 +26,57 @@ export default function StillsPage() {
     activeIndex: -1,
   });
 
-  // Load stills photos JSON data
+  // GSAP entrance and toggle animations
   useEffect(() => {
-    fetch('/stills_photos.json')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.length) {
-          setPhotos(data);
-        }
-      })
-      .catch((err) => console.error('Failed to load stills photos data', err));
-  }, []);
+    if (photos.length === 0) return;
+
+    const ctx = gsap.context(() => {
+      // Header and layout elements on first mount
+      gsap.fromTo('.back-btn', 
+        { opacity: 0, x: -20 },
+        { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out', delay: 0.1 }
+      );
+
+      const headerTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      headerTl.fromTo('.collage-header-section .eyebrow',
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.6, delay: 0.2 }
+      )
+      .fromTo('.collage-header-section h1',
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8 },
+        '-=0.4'
+      )
+      .fromTo('.collage-subtitle',
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6 },
+        '-=0.5'
+      )
+      .fromTo('.view-toggle-bar',
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.6 },
+        '-=0.4'
+      );
+
+      if (view === '3d') {
+        gsap.fromTo('.film-strip-viewport',
+          { opacity: 0, scale: 0.95 },
+          { opacity: 1, scale: 1, duration: 1.1, ease: 'power2.out', delay: 0.6 }
+        );
+        gsap.fromTo('.film-controls',
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.6, delay: 0.8 }
+        );
+      } else if (view === 'grid') {
+        gsap.fromTo('.collage-item',
+          { opacity: 0, y: 30, scale: 0.97 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: { amount: 0.6 }, ease: 'power2.out', delay: 0.3 }
+        );
+      }
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [view, photos]);
 
   const totalPhotos = photos.length;
 
@@ -207,7 +250,7 @@ export default function StillsPage() {
   };
 
   return (
-    <div className="stills-page-wrapper">
+    <div className="stills-page-wrapper" ref={containerRef}>
       <header className="collage-header-section">
         <p className="eyebrow">DI Portfolio</p>
         <h1 className="rgb-hover">DI Grading Stills</h1>

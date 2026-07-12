@@ -4,27 +4,16 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import VideoLightbox from '@/components/VideoLightbox';
+import trakinTechVideos from '../../../public/trakin-tech-videos.json';
 import './trakin.css';
 
 export default function TrakinTechPage() {
-  const [videos, setVideos] = useState([]);
+  const [videos, setVideos] = useState(trakinTechVideos);
   const [activeChannel, setActiveChannel] = useState('all');
   const [activeMonth, setActiveMonth] = useState('all');
   const [lightboxVideoId, setLightboxVideoId] = useState(null);
   
   const containerRef = useRef(null);
-
-  // Fetch trakin tech videos JSON
-  useEffect(() => {
-    fetch('/trakin-tech-videos.json')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.length) {
-          setVideos(data);
-        }
-      })
-      .catch((err) => console.error('Failed to load Trakin Tech videos', err));
-  }, []);
 
   // GSAP entrance animations
   useEffect(() => {

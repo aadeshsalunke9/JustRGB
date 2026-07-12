@@ -3,24 +3,17 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+import stillsPhotos from '../../public/stills_photos.json';
+
 export default function StillsSlideshow() {
   const containerRef = useRef(null);
   const ribbonRef = useRef(null);
-  const [photos, setPhotos] = useState([]);
-  const [counter, setCounter] = useState({ current: '01', total: '00' });
+  const [photos, setPhotos] = useState(stillsPhotos);
+  const [counter, setCounter] = useState({ 
+    current: '01', 
+    total: String(Math.min(18, stillsPhotos.length)).padStart(2, '0') 
+  });
   const activeRef = useRef(true);
-
-  useEffect(() => {
-    fetch('/stills_photos.json')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.length) {
-          setPhotos(data);
-          setCounter(prev => ({ ...prev, total: String(Math.min(18, data.length)).padStart(2, '0') }));
-        }
-      })
-      .catch((e) => console.error('Failed to load stills JSON', e));
-  }, []);
 
   useEffect(() => {
     if (photos.length === 0) return;

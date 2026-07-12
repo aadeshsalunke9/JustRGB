@@ -4,26 +4,15 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import VideoLightbox from '@/components/VideoLightbox';
+import paperPixelVideos from '../../../public/paper-pixel-videos.json';
 import './paper.css';
 
 export default function PaperPixelPage() {
-  const [videos, setVideos] = useState([]);
+  const [videos, setVideos] = useState(paperPixelVideos);
   const [activeMonth, setActiveMonth] = useState('all');
   const [lightboxVideoId, setLightboxVideoId] = useState(null);
   
   const containerRef = useRef(null);
-
-  // Fetch paper to pixel videos JSON
-  useEffect(() => {
-    fetch('/paper-pixel-videos.json')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.length) {
-          setVideos(data);
-        }
-      })
-      .catch((err) => console.error('Failed to load Paper to Pixel videos', err));
-  }, []);
 
   // GSAP entrance animations
   useEffect(() => {
