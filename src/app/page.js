@@ -11,7 +11,7 @@ import collagePhotosData from '../../public/collage_photos.json';
 import './globals.css';
 
 export default function Home() {
-  const [introActive, setIntroActive] = useState(true);
+  const [introActive, setIntroActive] = useState(false);
   const [weddingModalOpen, setWeddingModalOpen] = useState(false);
   const [contactStatus, setContactStatus] = useState('IDLE'); // 'IDLE', 'SENDING', 'SENT'
   const [collagePhotos, setCollagePhotos] = useState(collagePhotosData);
@@ -121,12 +121,12 @@ export default function Home() {
       doBurst();
     };
 
-    overlay.addEventListener('click', skip, { once: true });
+    if (overlay) overlay.addEventListener('click', skip, { once: true });
     document.addEventListener('keydown', skip, { once: true });
 
     return () => {
       if (tl) tl.kill();
-      overlay.removeEventListener('click', skip);
+      if (overlay) overlay.removeEventListener('click', skip);
       document.removeEventListener('keydown', skip);
     };
   }, [introActive]);
@@ -335,58 +335,44 @@ export default function Home() {
         });
       });
 
-      // 3. Pinned Horizontal Bio
-      const sec = document.getElementById('bio');
-      const slides = document.getElementById('bio-slides');
-      if (sec && slides) {
-        const n = slides.children.length;
-        slides.style.width = `${n * 100}vw`;
-
-        let quoteAnim = false;
-        let statsDone = false;
-
-        gsap.to(slides, {
-          x: () => -(window.innerWidth * (n - 1)),
-          ease: 'none',
+      // 3. Vertical Bio ScrollAnimations
+      gsap.fromTo('.bq-inner',
+        { yPercent: 110 },
+        { 
+          yPercent: 0, 
+          duration: 1.1, 
+          ease: 'power4.out', 
+          stagger: 0.14,
           scrollTrigger: {
-            trigger: sec,
-            start: 'top top',
-            end: () => `+=${window.innerWidth * (n - 1)}`,
-            pin: '.bio-pin-wrap',
-            scrub: 1.2,
-            invalidateOnRefresh: true,
-            onUpdate(self) {
-              const bar = document.getElementById('bio-bar');
-              if (bar) bar.style.transform = `scaleX(${self.progress})`;
+            trigger: '.bio-quote',
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
 
-              if (self.progress < 0.18 && !quoteAnim) {
-                quoteAnim = true;
-                gsap.fromTo('.bq-inner',
-                  { yPercent: 110 },
-                  { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.14 }
-                );
-              }
-
-              if (self.progress >= 0.38 && !statsDone) {
-                statsDone = true;
-                gsap.utils.toArray('.stat-num').forEach((el) => {
-                  const target = parseInt(el.dataset.target, 10);
-                  if (isNaN(target)) return;
-                  const sup = el.querySelector('sup');
-                  const suffix = sup ? sup.outerHTML : '';
-                  const obj = { v: 0 };
-                  gsap.to(obj, { 
-                    v: target, 
-                    duration: 2.2, 
-                    ease: 'power2.out',
-                    onUpdate() { el.innerHTML = Math.round(obj.v) + suffix; } 
-                  });
-                });
-              }
-            },
-          },
-        });
-      }
+      let statsDone = false;
+      ScrollTrigger.create({
+        trigger: '.stats-grid',
+        start: 'top 82%',
+        onEnter() {
+          if (statsDone) return;
+          statsDone = true;
+          gsap.utils.toArray('.stat-num').forEach((el) => {
+            const target = parseInt(el.dataset.target, 10);
+            if (isNaN(target)) return;
+            const sup = el.querySelector('sup');
+            const suffix = sup ? sup.outerHTML : '';
+            const obj = { v: 0 };
+            gsap.to(obj, { 
+              v: target, 
+              duration: 2.2, 
+              ease: 'power2.out',
+              onUpdate() { el.innerHTML = Math.round(obj.v) + suffix; } 
+            });
+          });
+        }
+      });
     }, landingRef);
 
     return () => ctx.revert();
@@ -515,96 +501,53 @@ export default function Home() {
           <div className="hero-year-label" aria-hidden="true">2025</div>
         </section>
 
-        {/* BIO SECTION - Horizontal Slides */}
+        {/* BIO SECTION - Simple Vertical Flow */}
         <section id="bio">
-          <div className="bio-pin-wrap">
-            <div className="bio-slides" id="bio-slides">
-              {/* Slide 1: Quote */}
-              <div className="bio-slide bio-slide--quote">
-                <div className="slide-collage-bg">
-                  <div className="collage-bg-grid">
-                    {collagePhotos.slice(0, 12).map((photoName, i) => (
-                      <img key={i} src={`/images/collage/${photoName}`} alt="" />
-                    ))}
-                  </div>
-                  <div className="collage-bg-overlay"></div>
+          <div className="bio-vertical-container">
+            {/* Left Column: Quote & Stats */}
+            <div className="bio-left">
+              <blockquote className="bio-quote">
+                <span className="bq-line"><span className="bq-inner rgb-hover">"Color is the</span></span>
+                <span className="bq-line"><span className="bq-inner rgb-hover">first thing</span></span>
+                <span className="bq-line"><span className="bq-inner rgb-hover">you feel."</span></span>
+              </blockquote>
+              
+              <div className="stats-grid">
+                <div className="stat-item">
+                  <div className="stat-num" data-target="50">0<sup>+</sup></div>
+                  <div className="stat-lbl">Projects Graded</div>
                 </div>
-                <div className="bio-slide-inner">
-                  <p className="slide-tag">01 / 03</p>
-                  <blockquote className="bio-quote">
-                    <span className="bq-line"><span className="bq-inner rgb-hover">"Color is the</span></span>
-                    <span className="bq-line"><span className="bq-inner rgb-hover">first thing</span></span>
-                    <span className="bq-line"><span className="bq-inner rgb-hover">you feel."</span></span>
-                  </blockquote>
-                  <p className="bio-attr">— Aadesh Salunke, Colorist</p>
+                <div className="stat-item">
+                  <div className="stat-num" data-target="10">0<sup>M+</sup></div>
+                  <div className="stat-lbl">YouTube Combined Audience</div>
                 </div>
-              </div>
-
-              {/* Slide 2: Stats */}
-              <div className="bio-slide bio-slide--stats">
-                <div className="slide-collage-bg">
-                  <div className="collage-bg-grid">
-                    {collagePhotos.slice(12, 24).map((photoName, i) => (
-                      <img key={i} src={`/images/collage/${photoName}`} alt="" />
-                    ))}
-                  </div>
-                  <div className="collage-bg-overlay"></div>
+                <div className="stat-item">
+                  <div className="stat-num" data-target="5">0<sup>+</sup></div>
+                  <div className="stat-lbl">Years Experience</div>
                 </div>
-                <div className="bio-slide-inner">
-                  <p className="slide-tag">02 / 03</p>
-                  <p className="eyebrow" style={{ marginBottom: '24px' }}>By the Numbers</p>
-                  <div className="stats-stack">
-                    <div className="stat-row">
-                      <div className="stat-num" data-target="50">0<sup>+</sup></div>
-                      <div className="stat-lbl">Projects Graded</div>
-                    </div>
-                    <div className="stat-row">
-                      <div className="stat-num" data-target="10">0<sup>M+</sup></div>
-                      <div className="stat-lbl">YouTube Combined Audience</div>
-                    </div>
-                    <div className="stat-row">
-                      <div className="stat-num" data-target="5">0<sup>+</sup></div>
-                      <div className="stat-lbl">Years Experience</div>
-                    </div>
-                    <div className="stat-row">
-                      <div className="stat-num" data-target="3000">0<sup>+</sup></div>
-                      <div className="stat-lbl">Hours in the Suite</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Slide 3: About */}
-              <div className="bio-slide bio-slide--about">
-                <div className="slide-collage-bg">
-                  <div className="collage-bg-grid">
-                    {collagePhotos.slice(24, 36).map((photoName, i) => (
-                      <img key={i} src={`/images/collage/${photoName}`} alt="" />
-                    ))}
-                  </div>
-                  <div className="collage-bg-overlay"></div>
-                </div>
-                <div className="bio-slide-inner">
-                  <p className="slide-tag">03 / 03</p>
-                  <p className="eyebrow" style={{ marginBottom: '28px' }}>About</p>
-                  <p className="bio-copy">
-                    I shape <em>emotion</em> through the language of light and color. With over five years in the color suite, I have engineered the look for high-profile digital channels (10M+ combined audience), independent documentaries, and premium wedding cinema. I bridge technical grading with creative storytelling, transforming raw footage into <em>unforgettable cinematic experiences</em>.
-                  </p>
-                  <div className="tools-list">
-                    <div className="tool-item"><span className="tool-n">01</span><span className="tool-name rgb-hover">DaVinci Resolve Studio</span></div>
-                    <div className="tool-item"><span className="tool-n">02</span><span className="tool-name rgb-hover">DI Color Grading</span></div>
-                    <div className="tool-item"><span className="tool-n">03</span><span className="tool-name rgb-hover">Primary &amp; Secondary Grading</span></div>
-                    <div className="tool-item"><span className="tool-n">04</span><span className="tool-name rgb-hover">Shot Matching &amp; Consistency</span></div>
-                    <div className="tool-item"><span className="tool-n">05</span><span className="tool-name rgb-hover">YouTube / Digital Content Grading</span></div>
-                    <div className="tool-item"><span className="tool-n">06</span><span className="tool-name rgb-hover">LUT Design &amp; Delivery</span></div>
-                  </div>
+                <div className="stat-item">
+                  <div className="stat-num" data-target="3000">0<sup>+</sup></div>
+                  <div className="stat-lbl">Hours in the Suite</div>
                 </div>
               </div>
             </div>
-            <div className="bio-progress-bar-wrap" aria-hidden="true">
-              <div className="bio-progress-bar" id="bio-bar"></div>
+
+            {/* Right Column: About Text & Tools List */}
+            <div className="bio-right" data-reveal="fade">
+              <p className="eyebrow" style={{ marginBottom: '16px' }}>About</p>
+              <p className="bio-copy">
+                I shape <em>emotion</em> through the language of light and color. With over five years in the color suite, I have engineered the look for high-profile digital channels (10M+ combined audience), independent documentaries, and premium wedding cinema. I bridge technical grading with creative storytelling, transforming raw footage into <em>unforgettable cinematic experiences</em>.
+              </p>
+              
+              <div className="tools-list-vertical">
+                <div className="tool-item-v"><span className="tool-n-v">01</span><span className="tool-name-v rgb-hover">DaVinci Resolve Studio</span></div>
+                <div className="tool-item-v"><span className="tool-n-v">02</span><span className="tool-name-v rgb-hover">DI Color Grading</span></div>
+                <div className="tool-item-v"><span className="tool-n-v">03</span><span className="tool-name-v rgb-hover">Primary &amp; Secondary Grading</span></div>
+                <div className="tool-item-v"><span className="tool-n-v">04</span><span className="tool-name-v rgb-hover">Shot Matching &amp; Consistency</span></div>
+                <div className="tool-item-v"><span className="tool-n-v">05</span><span className="tool-name-v rgb-hover">YouTube / Digital Content Grading</span></div>
+                <div className="tool-item-v"><span className="tool-n-v">06</span><span className="tool-name-v rgb-hover">LUT Design &amp; Delivery</span></div>
+              </div>
             </div>
-            <p className="bio-hint" aria-hidden="true">← SCROLL →</p>
           </div>
         </section>
 

@@ -843,105 +843,44 @@ body:has(.rgb-hover:hover) #cursor-ring { width: 58px; height: 58px; }
   to   { transform: translateX(-50%); }
 }
 
-/* ── 13. BIO — Pinned Horizontal ─────────────────────────────── */
-#bio { position: relative; }
-
-.bio-pin-wrap {
-  height: 100vh;
-  overflow: hidden;
+/* ── 13. BIO — Vertical Layout ─────────────────────────────── */
+#bio {
   position: relative;
+  background: var(--void);
+  padding: 160px var(--gutter);
+  overflow: hidden;
+  border-bottom: 1px solid var(--rim);
 }
 
-.bio-slides {
-  display: flex;
-  height: 100%;
-  will-change: transform;
-}
-
-.bio-slide {
-  width: 100vw;
-  height: 100%;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-}
-
-.bio-slide--quote  { background: var(--void); position: relative; overflow: hidden; }
-.bio-slide--stats  { background: var(--deep); position: relative; overflow: hidden; }
-.bio-slide--about  { background: var(--ink); position: relative; overflow: hidden; }
-.bio-slide--about::after {
-  content: '';
-  position: absolute;
-  bottom: -20%; right: -10%;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(31, 255, 122, 0.04) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bio-slide-inner {
-  padding: 0 var(--gutter);
-  width: 100%;
-  max-width: 1180px;
+.bio-vertical-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 120px;
   position: relative;
   z-index: 10;
 }
 
-/* Background Collage for Bio Slides */
-.slide-collage-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 1;
-}
-.collage-bg-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  width: 100%;
-  height: 100%;
-  gap: 12px;
-  padding: 12px;
-  box-sizing: border-box;
-  opacity: 0.38; /* Faint background photos */
-}
-.collage-bg-grid img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-.collage-bg-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(5, 5, 5, 0.82) 0%, rgba(5, 5, 5, 0.88) 100%);
-  z-index: 2;
-  pointer-events: none;
+.bio-left {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
 }
 
-.slide-tag {
-  font-family: var(--fm);
-  font-size: 14px;
-  letter-spacing: .3em;
-  text-transform: uppercase;
-  color: var(--dim);
-  margin-bottom: clamp(16px, 3vh, 32px);
-  display: block;
+.bio-right {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
 }
 
-/* Quote */
 .bio-quote {
   font-family: var(--fh);
   font-weight: 800;
-  font-size: clamp(2.8rem, 6.5vw, 6rem);
+  font-size: clamp(2.4rem, 4.8vw, 4.4rem);
   color: var(--cream);
-  line-height: 1.05;
+  line-height: 1.08;
   text-transform: uppercase;
-  display: flex;
-  flex-direction: column;
 }
 
 .bq-line {
@@ -951,90 +890,93 @@ body:has(.rgb-hover:hover) #cursor-ring { width: 58px; height: 58px; }
 }
 .bq-inner {
   display: block;
-  /* GSAP slides up from yPercent:110 */
 }
 
-.bio-attr {
-  font-family: var(--fm);
-  font-size: 14px;
-  letter-spacing: .22em;
-  color: var(--muted);
-  margin-top: 36px;
-  text-transform: uppercase;
+.bio-copy {
+  font-family: var(--fb);
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: var(--haze);
+  margin-bottom: 0;
+  font-style: italic;
+}
+.bio-copy em {
+  color: var(--light);
+  font-style: normal;
 }
 
 /* Stats */
-.stats-stack { display: flex; flex-direction: column; }
-.stat-row {
+.stats-grid {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 24px;
-  padding: clamp(10px, 1.4vh, 18px) 0;
-  border-bottom: 1px solid var(--rim);
-  align-items: center;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px 48px;
 }
-.stat-row:first-child { border-top: 1px solid var(--rim); }
+
+.stat-item {
+  border-top: 1px solid var(--rim);
+  padding-top: 24px;
+}
+
 .stat-num {
   font-family: var(--fh);
   font-weight: 800;
-  font-size: clamp(2.4rem, 4.2vw, 3.6rem);
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
   color: var(--cream);
   line-height: 1;
+  margin-bottom: 10px;
 }
 .stat-num sup {
   font-size: 0.45em;
   color: var(--R);
   vertical-align: super;
-  margin-left: 4px;
+  margin-left: 2px;
 }
+
 .stat-lbl {
   font-family: var(--fm);
-  font-size: 14px;
-  letter-spacing: .22em;
+  font-size: 11px;
+  letter-spacing: .2em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-/* About */
-.bio-copy {
-  font-family: var(--fb);
-  font-size: 1.28rem;
-  line-height: 1.75;
-  color: var(--haze);
-  max-width: 780px;
-  margin-bottom: 56px;
-  font-style: italic;
+/* Tools List Vertical */
+.tools-list-vertical {
+  display: flex;
+  flex-direction: column;
 }
-.bio-copy em { color: var(--light); font-style: normal; }
 
-.tools-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0 48px;
-}
-.tool-item {
+.tool-item-v {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
   padding: 18px 0;
-  border-top: 1px solid var(--rim);
-  transition: padding-left .3s var(--ease);
+  border-bottom: 1px solid var(--rim);
+  transition: padding-left 0.3s var(--ease);
 }
-.tool-item:hover { padding-left: 12px; }
-.tool-n {
+.tool-item-v:first-child {
+  border-top: 1px solid var(--rim);
+}
+.tool-item-v:hover {
+  padding-left: 12px;
+}
+.tool-n-v {
   font-family: var(--fm);
-  font-size: 14px;
+  font-size: 12px;
   color: var(--G);
   letter-spacing: .1em;
   min-width: 20px;
 }
-.tool-name {
+.tool-name-v {
   font-family: var(--fm);
-  font-size: 15px;
-  letter-spacing: .16em;
+  font-size: 14px;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--light);
-  --text-color: var(--light);
+  transition: color 0.3s;
+}
+.tool-item-v:hover .tool-name-v {
+  color: var(--cream);
 }
 
 /* About Footer & Video Full Bleed styles */
