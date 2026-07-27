@@ -1,25 +1,29 @@
 import "./globals.css";
-import "./mobile.css";
-import RgbStrip from "@/components/RgbStrip";
+import ShaderBackground from "@/components/ShaderBackground";
 import Nav from "@/components/Nav";
-import Cursor from "@/components/Cursor";
-import FilmGrain from "@/components/FilmGrain";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "JUST RGB — Cinematic Colorist Portfolio",
-  description: "A premium cinematic dark-themed colorist portfolio displaying color grade sheets, log-to-graded stills, and case studies by Aadesh Salunke.",
+  title: "Aadesh Salunke — Colorist Portfolio",
+  description: "A professional portfolio site for Aadesh Salunke displaying cinematic look development, film color grading, and restoration workflows.",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <RgbStrip />
+        {/* Fullscreen WebGL Generative Background Shader */}
+        <ShaderBackground />
+        
+        {/* Navigation Navbar overlay */}
         <Nav />
-        <Cursor />
-        <FilmGrain />
-        {children}
+        
+        {/* Page Contents overlay */}
+        <div className="content-wrapper">
+          {children}
+        </div>
+        
+        {/* Footer overlay */}
         <Footer />
       </body>
     </html>
