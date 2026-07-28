@@ -159,7 +159,7 @@ export default function Home() {
                   paddingBottom: '10px'
                 }}
               >
-                <span>{project.num} // {project.title}</span>
+                <span>{project.num} &#47;&#47; {project.title}</span>
                 <span className="caption-arrow" style={{ transition: 'transform 0.3s ease' }}>VIEW WORK →</span>
               </div>
             </Link>

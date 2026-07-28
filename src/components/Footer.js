@@ -15,7 +15,7 @@ export default function Footer() {
         
         {/* Left Side: Headline & Mail link */}
         <div className="footer-left">
-          <h2 className="footer-headline">Let's shape your frames.</h2>
+          <h2 className="footer-headline">Let&apos;s shape your frames.</h2>
           <a href="mailto:aadeshsalunke9@gmail.com" className="footer-email">
             aadeshsalunke9@gmail.com
           </a>
