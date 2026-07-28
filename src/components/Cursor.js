@@ -2,48 +2,42 @@
 import { useEffect, useRef } from 'react';
 
 export default function Cursor() {
-  const containerRef = useRef(null);
-  const rRef = useRef(null);
-  const gRef = useRef(null);
-  const bRef = useRef(null);
+  const dotRef = useRef(null);
+  const ringRef = useRef(null);
 
   useEffect(() => {
-    const container = containerRef.current;
-    const rDot = rRef.current;
-    const gDot = gRef.current;
-    const bDot = bRef.current;
+    const dot = dotRef.current;
+    const ring = ringRef.current;
+    if (!dot || !ring) return;
 
-    if (!container || !rDot || !gDot || !bDot) return;
-
-    let targetX = typeof window !== 'undefined' ? window.innerWidth / 2 : 0;
-    let targetY = typeof window !== 'undefined' ? window.innerHeight / 2 : 0;
-    
-    // Interpolated positions for smooth movement
-    let gX = targetX;
-    let gY = targetY;
-    let rX = targetX;
-    let rY = targetY;
-    let bX = targetX;
-    let bY = targetY;
-
+    let mx = typeof window !== 'undefined' ? window.innerWidth / 2 : 0;
+    let my = typeof window !== 'undefined' ? window.innerHeight / 2 : 0;
+    let rx = mx;
+    let ry = my;
     let visible = false;
 
     const show = () => {
       if (visible) return;
       visible = true;
-      container.style.opacity = '1';
+      dot.style.opacity = '1';
+      ring.style.opacity = '1';
     };
 
     const hide = () => {
       visible = false;
-      container.style.opacity = '0';
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
     };
 
-    container.style.opacity = '0';
+    dot.style.opacity = '0';
+    ring.style.opacity = '0';
 
     const onMouseMove = (e) => {
-      targetX = e.clientX;
-      targetY = e.clientY;
+      mx = e.clientX;
+      my = e.clientY;
+      dot.style.transform = `translate(${mx}px, ${my}px)`;
+      document.documentElement.style.setProperty('--cx', mx + 'px');
+      document.documentElement.style.setProperty('--cy', my + 'px');
       show();
     };
 
@@ -53,70 +47,25 @@ export default function Cursor() {
 
     let animId;
     const tick = () => {
-      // Smooth tracking for green (center)
-      gX += (targetX - gX) * 0.15;
-      gY += (targetY - gY) * 0.15;
-
-      // Calculate velocity / distance to target
-      const dx = targetX - gX;
-      const dy = targetY - gY;
-
-      // Red offsets slightly forward/ahead of the center
-      const rTargetX = gX + dx * 0.6;
-      const rTargetY = gY + dy * 0.6;
-      rX += (rTargetX - rX) * 0.12;
-      rY += (rTargetY - rY) * 0.12;
-
-      // Blue offsets slightly backward/behind the center
-      const bTargetX = gX - dx * 0.6;
-      const bTargetY = gY - dy * 0.6;
-      bX += (bTargetX - bX) * 0.12;
-      bY += (bTargetY - bY) * 0.12;
-
-      // Apply transforms
-      container.style.transform = `translate3d(${gX}px, ${gY}px, 0)`;
-      rDot.style.transform = `translate3d(${rX - gX}px, ${rY - gY}px, 0)`;
-      bDot.style.transform = `translate3d(${bX - gX}px, ${bY - gY}px, 0)`;
-
+      rx = rx + (mx - rx) * 0.09;
+      ry = ry + (my - ry) * 0.09;
+      ring.style.transform = `translate(${rx}px, ${ry}px)`;
       animId = requestAnimationFrame(tick);
     };
     animId = requestAnimationFrame(tick);
-
-    // Dynamic hover scaling on links/buttons
-    const addHover = () => {
-      container.classList.add('cursor-hover');
-    };
-    const removeHover = () => {
-      container.classList.remove('cursor-hover');
-    };
-
-    const updateHoverListeners = () => {
-      const interactiveElements = document.querySelectorAll('a, button, [role="button"], .rgb-hover, input, textarea, select');
-      interactiveElements.forEach((el) => {
-        el.addEventListener('mouseenter', addHover);
-        el.addEventListener('mouseleave', removeHover);
-      });
-    };
-
-    // Run hover updates and watch for DOM mutations (e.g. modal open)
-    updateHoverListeners();
-    const observer = new MutationObserver(updateHoverListeners);
-    observer.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseleave', hide);
       document.removeEventListener('mouseenter', show);
-      observer.disconnect();
       cancelAnimationFrame(animId);
     };
   }, []);
 
   return (
-    <div id="custom-cursor" className="custom-cursor" ref={containerRef} aria-hidden="true">
-      <div className="cursor-dot dot-r" ref={rRef} />
-      <div className="cursor-dot dot-g" ref={gRef} />
-      <div className="cursor-dot dot-b" ref={bRef} />
-    </div>
+    <>
+      <div id="cursor-dot" ref={dotRef} aria-hidden="true" />
+      <div id="cursor-ring" ref={ringRef} aria-hidden="true" />
+    </>
   );
 }
