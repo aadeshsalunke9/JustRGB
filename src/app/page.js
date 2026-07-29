@@ -493,7 +493,21 @@ export default function Home() {
         {/* HERO SECTION */}
         <section id="hero">
           <div className="hero-bg-image-wrap">
-            <img src="/images/grading_setup.png" alt="DaVinci Resolve setup background"/>
+            <video
+              ref={showreelRef}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              src="/Showreel.mp4"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
             <div className="hero-bg-gradient" aria-hidden="true"></div>
           </div>
           <div className="hero-bg-word" aria-hidden="true">COLOR</div>
