@@ -563,7 +563,9 @@ export default function Home() {
             padding: '0 var(--gutter, 48px)',
           }}>
             <video
-              controls
+              autoPlay
+              loop
+              muted
               playsInline
               preload="auto"
               className="showreel-video"
@@ -578,7 +580,6 @@ export default function Home() {
               }}
             >
               <source src="/Showreel.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
             </video>
           </div>
         </section>
