@@ -17,7 +17,17 @@ export default function Home() {
   const [collagePhotos, setCollagePhotos] = useState(collagePhotosData);
   
   const landingRef = useRef(null);
+  const showreelRef = useRef(null);
   const introTimeline = useRef(null);
+
+  // Force showreel video to play on mount
+  useEffect(() => {
+    const vid = showreelRef.current;
+    if (vid) {
+      vid.muted = true;
+      vid.play().catch(() => {});
+    }
+  }, []);
 
   // Initialize intro and scroll animations
   useEffect(() => {
@@ -563,6 +573,7 @@ export default function Home() {
             padding: '0 var(--gutter, 48px)',
           }}>
             <video
+              ref={showreelRef}
               autoPlay
               loop
               muted
@@ -578,9 +589,8 @@ export default function Home() {
                 borderRadius: '4px',
                 background: '#000',
               }}
-            >
-              <source src="/Showreel.mp4" type="video/mp4" />
-            </video>
+              src="/Showreel.mp4"
+            />
           </div>
         </section>
 
