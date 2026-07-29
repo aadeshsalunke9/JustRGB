@@ -557,12 +557,25 @@ export default function Home() {
             <p className="eyebrow" data-reveal="fade">Demo Reel</p>
             <h2 className="sec-title rgb-hover" data-reveal="lines">Showreel</h2>
           </div>
-          <div className="showreel-player">
+          <div className="showreel-player" style={{
+            maxWidth: 'var(--max, 1400px)',
+            margin: '0 auto',
+            padding: '0 var(--gutter, 48px)',
+          }}>
             <video
               controls
               playsInline
-              preload="metadata"
+              preload="auto"
               className="showreel-video"
+              style={{
+                width: '100%',
+                height: 'auto',
+                aspectRatio: '16 / 9',
+                display: 'block',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '4px',
+                background: '#000',
+              }}
             >
               <source src="/Showreel.mp4" type="video/mp4" />
               Your browser does not support the video tag.
